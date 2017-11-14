@@ -50,7 +50,7 @@ RUN apt-get update \
   && npm install -g n \
   && n latest
 
-RUN git clone https://github.com/ADumaine/secnodetracker \
+RUN git clone https://github.com/ZencashOfficial/secnodetracker \
   && cd secnodetracker \
   && npm install \
   && npm install pm2 -g

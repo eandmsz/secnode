@@ -21,9 +21,12 @@ RUN  export GNUPGHOME="$(mktemp -d)"; \
   $BUILD_WORK_DIR/gosu nobody true;
 
 #Checkout and build zen
-RUN git clone https://github.com/ZencashOfficial/zen \
+#RUN git clone https://github.com/ZencashOfficial/zen \
+#Use the TLS error fix branch until its merged into the zen master:
+RUN git clone https://github.com/ZencashOfficial/zen/tree/TLS_clear_error_queue \
   && cd zen \
   && git checkout development \
+  && sed -i -e "s/const int MAX_OUTBOUND_CONNECTIONS = 8;/const int MAX_OUTBOUND_CONNECTIONS = 10;/g" ./src/net.cpp \
   && ./zcutil/build.sh -j$(nproc)
 
 ###Second/main image copies in build artefacts
@@ -36,7 +39,7 @@ WORKDIR $ZEN_HOME
 
 RUN apt-get update \
   && DEBIAN_FRONTEND=noninteractive apt-get -y --no-install-recommends install apt-utils \
-  && DEBIAN_FRONTEND=noninteractive apt-get -y --no-install-recommends install ca-certificates curl wget libgomp1 git
+  && DEBIAN_FRONTEND=noninteractive apt-get -y --no-install-recommends install ca-certificates curl wget libgomp1 git iputils-ping net-tools iproute2 dnsutils tcpdump
 
 COPY --from=builder $BUILD_WORK_DIR/gosu /usr/local/bin
 COPY --from=builder $BUILD_WORK_DIR/zen/src/zend /usr/local/bin
@@ -48,7 +51,7 @@ RUN chmod a+x /usr/local/bin/gosu /usr/local/bin/zend /usr/local/bin/zen-cli
 RUN apt-get update \
   && DEBIAN_FRONTEND=noninteractive apt-get -y install npm \
   && npm install -g n \
-  && n latest
+  && n 8.9
 
 RUN git clone https://github.com/ZencashOfficial/secnodetracker \
   && cd secnodetracker \
@@ -62,14 +65,12 @@ RUN git clone https://github.com/ZencashOfficial/secnodetracker \
 # or via a "port=9876" line in zen.conf.
 #Defaults are 9033/19033 (Testnet)
 EXPOSE 9033
-EXPOSE 19033
 
 # Default rpc communication port, can be changed via $OPTS (e.g. docker run -e OPTS="-rpcport=8765")
 # or via a "rpcport=8765" line in zen.conf. This port should never be mapped to the outside world
 # via the "docker run -p/-P" command.
 #Defaults are 8231/18231 (Testnet)
-EXPOSE 8231
-EXPOSE 18231
+#EXPOSE 8231
 
 # Data volumes, if you prefer mounting a host directory use "-v /path:/mnt/zen_config" command line
 # option (folder ownership will be changed to the same UID/GID as provided by the docker run command)
@@ -87,12 +88,11 @@ CMD ["start_secure_node"]
 # Default p2p communication port, can be changed via $OPTS (e.g. docker run -e OPTS="-port=9876")
 # or via a "port=9876" line in zen.conf.
 EXPOSE 9033
-EXPOSE 19033
 
 # Default rpc communication port, can be changed via $OPTS (e.g. docker run -e OPTS="-rpcport=8765")
 # or via a "rpcport=8765" line in zen.conf. This port should never be mapped to the outside world
 # via the "docker run -p/-P" command.
-EXPOSE 8231
+#EXPOSE 8231
 
 # Data volumes, if you prefer mounting a host directory use "-v /path:/mnt/zen_config" command line
 # option (folder ownership will be changed to the same UID/GID as provided by the docker run command)

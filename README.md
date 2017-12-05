@@ -88,15 +88,8 @@ If using external volumes, the mount points are:
 
 ### Network Ports
 Ports Exposed By Default :
-- RPC MainNet: 8231
-- RPC TestNet: 18231
 - P2P MainNet: 9033
-- P2P TestNet: 18231
 
 These are not bound to host ports on startup. You need to map them with `-p` Docker option.
 RPC access is by default restricted to 127.0.0.1 in the config files.
-
-#### TODO:
-- Use release versions of zend and node tracker, when available
-- Find a better way to pull in secure node tracker config
 

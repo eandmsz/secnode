@@ -22,8 +22,8 @@ RUN  export GNUPGHOME="$(mktemp -d)"; \
 
 #Checkout and build zen
 #RUN git clone https://github.com/ZencashOfficial/zen \
-#Use the TLS error fix branch until its merged into the zen master:
-RUN git clone https://github.com/ZencashOfficial/zen/tree/TLS_clear_error_queue \
+#Use the dev branch until the TLS fix gets merged into the master:
+RUN git clone https://github.com/ZencashOfficial/zen/tree/development \
   && cd zen \
   && git checkout development \
   && sed -i -e "s/const int MAX_OUTBOUND_CONNECTIONS = 8;/const int MAX_OUTBOUND_CONNECTIONS = 10;/g" ./src/net.cpp \

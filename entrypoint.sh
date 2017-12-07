@@ -79,6 +79,8 @@ chown -R user:user $HOME $HOME/.zcash-params $ZEN_HOME/zcash-params $ZEN_HOME
 if [[ "$1" == start_secure_node ]]; then
   echo "Starting up Zen Daemon..."
   /usr/local/bin/gosu user zend &
+  echo "Give 30s for zend to connect to peers and catch up with blk height..."
+  sleep 30
   echo "Starting up Secure Node Tracker..."
   cd $ZEN_HOME/secnodetracker
   node app.js &

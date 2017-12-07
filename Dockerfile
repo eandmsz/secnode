@@ -37,7 +37,7 @@ WORKDIR $ZEN_HOME
 
 RUN apt-get update \
   && DEBIAN_FRONTEND=noninteractive apt-get -y --no-install-recommends install apt-utils \
-  && DEBIAN_FRONTEND=noninteractive apt-get -y --no-install-recommends install ca-certificates curl wget libgomp1 git iputils-ping net-tools iproute2 dnsutils tcpdump
+  && DEBIAN_FRONTEND=noninteractive apt-get -y --no-install-recommends install ca-certificates curl wget libgomp1 git
 
 COPY --from=builder $BUILD_WORK_DIR/gosu /usr/local/bin
 COPY --from=builder $BUILD_WORK_DIR/zen/src/zend /usr/local/bin

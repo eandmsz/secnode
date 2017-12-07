@@ -20,10 +20,8 @@ RUN  export GNUPGHOME="$(mktemp -d)"; \
 # verify that the binary works
   $BUILD_WORK_DIR/gosu nobody true;
 
-#Checkout and build zen
-#RUN git clone https://github.com/ZencashOfficial/zen \
-#Use the dev branch until the TLS fix gets merged into the master:
-RUN git clone https://github.com/ZencashOfficial/zen/tree/development \
+#Checkout and build zen from the development branch
+RUN git clone https://github.com/ZencashOfficial/zen \
   && cd zen \
   && git checkout development \
   && sed -i -e "s/const int MAX_OUTBOUND_CONNECTIONS = 8;/const int MAX_OUTBOUND_CONNECTIONS = 10;/g" ./src/net.cpp \

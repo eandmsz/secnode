@@ -79,13 +79,16 @@ chown -R user:user $HOME $HOME/.zcash-params $ZEN_HOME/zcash-params $ZEN_HOME
 if [[ "$1" == start_secure_node ]]; then
   echo "Starting up Zen Daemon..."
   /usr/local/bin/gosu user zend &
-  echo "Give 30s for zend to connect to peers and catch up with blk height..."
+# Delay node tracker startup by 30s, so zend can connect to peers and catch up with blk height
   sleep 30
   echo "Starting up Secure Node Tracker..."
   cd $ZEN_HOME/secnodetracker
   $ZEN_HOME/secnodetracker/node app.js &
   
-  # Check every 10s if zend is still running or not. If not then exit entrypoint.sh with error code, which indicates docker to restart the container
+# Wait 1 minute before start checking the processes status
+  sleep 60
+# Check every 10s if zend is still running or not. If not then exit entrypoint.sh with error code, which indicates docker to restart the container
+# If secnodetracker exited then just restart it
   while true; do 
 	  sleep 10
 	  if ! [ -e /proc/`cat /mnt/zen/data/zend.pid` ]; then exit 1; fi

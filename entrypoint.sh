@@ -83,7 +83,7 @@ if [[ "$1" == start_secure_node ]]; then
   sleep 30
   echo "Starting up Secure Node Tracker..."
   cd $ZEN_HOME/secnodetracker
-  $ZEN_HOME/secnodetracker/node app.js &
+  node app.js &
   
 # Wait 1 minute before start checking the processes status
   sleep 60

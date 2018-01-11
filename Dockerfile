@@ -51,13 +51,13 @@ RUN apt-get update \
   && npm install -g n \
   && n 8.9
 
-RUN echo -n "Tracker Version before git clone:"
+RUN echo -n "Tracker Version before git clone:" \
   && cat secnodetracker/package.json
 RUN git clone https://github.com/ZencashOfficial/secnodetracker \
   && cd secnodetracker \
   && npm install \
   && npm install pm2 -g
-RUN echo -n "Tracker Version after git clone:"
+RUN echo -n "Tracker Version after git clone:" \
   && cat package.json
 
 #COPY ssl_ca_certs/* /usr/local/share/ca-certificates/

@@ -85,8 +85,8 @@ if [[ "$1" == start_secure_node ]]; then
   cd $ZEN_HOME/secnodetracker
   node app.js &
   
-# Wait 1 minute before start checking the processes status
-  sleep 60
+# Wait 2 minutes before start checking the processes status
+  sleep 120
 # Check every 10s if zend is still running or not. If not then exit entrypoint.sh with error code, which indicates docker to restart the container
 # If secnodetracker exited then just restart it
   while true; do 

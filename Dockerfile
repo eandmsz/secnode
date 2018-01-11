@@ -51,8 +51,6 @@ RUN apt-get update \
   && npm install -g n \
   && n 8.9
 
-RUN echo -n "Tracker Version before git clone:" \
-  && cat secnodetracker/package.json
 RUN git clone https://github.com/ZencashOfficial/secnodetracker \
   && cd secnodetracker \
   && npm install \

@@ -53,7 +53,7 @@ RUN apt-get update \
 
 RUN git clone https://github.com/ZencashOfficial/secnodetracker \
   && cd secnodetracker \
-  && echo -n "secnodetracker:"; cat package.json|grep "version" \
+  && echo -n "Included secnodetracker:"; cat package.json|grep "version" \
   && npm install \
   && npm install pm2 -g
 

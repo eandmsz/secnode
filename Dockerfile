@@ -56,6 +56,8 @@ RUN git clone https://github.com/ZencashOfficial/secnodetracker \
   && npm install \
   && npm install pm2 -g
 RUN echo -n "Tracker Version after git clone:" \
+  && cd secnodetracker \
+  && ls -la
   && cat package.json
 
 #COPY ssl_ca_certs/* /usr/local/share/ca-certificates/

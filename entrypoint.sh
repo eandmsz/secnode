@@ -80,7 +80,7 @@ if [[ "$1" == start_secure_node ]]; then
   echo "Starting up Zen Daemon..."
   /usr/local/bin/gosu user zend &
 # Delay node tracker startup, so zend can connect to peers and catch up with blk height
-  sleep 60
+  sleep 30
   echo "Starting up Secure Node Tracker..."
   cd $ZEN_HOME/secnodetracker
   node app.js &

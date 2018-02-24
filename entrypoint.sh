@@ -79,16 +79,14 @@ chown -R user:user $HOME $HOME/.zcash-params $ZEN_HOME/zcash-params $ZEN_HOME
 if [[ "$1" == start_secure_node ]]; then
   echo "Starting up Zen Daemon..."
   /usr/local/bin/gosu user zend &
-# Delay node tracker startup until we have at least 8 connections
-  sleep 20
+  sleep 15
   CONN=$(/usr/local/bin/gosu user zen-cli -conf=/home/user/.zen/zen.conf getconnectioncount|tr -d '\n')
-  while [ "$CONN" == "" ]; do
-   sleep 5
-   echo "Delaying Secure Node Tracker startup until zend has started"
+  while [ -z "$CONN" ]; do
+   # Wait while the CONN variable is zero length
+   sleep 5; echo "Delaying Secure Node Tracker startup until zend has started..."
   done
   while [ "$CONN" -lt 8 ]; do
-   sleep 5
-   echo "Delaying Secure Node Tracker startup until we have enough connections: $CONN/8"
+   sleep 5; echo "Delaying Secure Node Tracker startup until we have 8 connections... ($CONN/8)"
   done
   PREVBLOCKHEIGHT=$(cat /tmp/previousblockheight)
   CURRBLOCKHEIGHT=$(/usr/local/bin/gosu user zen-cli -conf=/home/user/.zen/zen.conf getblockcount|tr -d '\n')
@@ -96,8 +94,7 @@ if [[ "$1" == start_secure_node ]]; then
   sleep 5
   while [ "$PREVBLOCKHEIGHT" -lt "$CURRBLOCKHEIGHT" ]; do
    /usr/local/bin/gosu user zen-cli -conf=/home/user/.zen/zen.conf getblockcount|tr -d '\n' > /tmp/previousblockheight
-   sleep 5
-   echo "Delaying Secure Node Tracker startup until the blockheight stops increasing..."
+   sleep 5; echo "Delaying Secure Node Tracker startup until the blockheight stops increasing..."
   done
   echo "Starting up Secure Node Tracker..."
   cd $ZEN_HOME/secnodetracker

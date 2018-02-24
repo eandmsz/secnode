@@ -84,14 +84,23 @@ if [[ "$1" == start_secure_node ]]; then
   CONN=$(/usr/local/bin/gosu user zen-cli -conf=/home/user/.zen/zen.conf getconnectioncount|tr -d '\n')
   while [ "$CONN" -lt 8 ]; do
    sleep 5
-   echo "Delaying Secure Node Tracker startup until we have at least 8 connections..."
+   echo "Delaying Secure Node Tracker startup until we have enough connections: $CONN/8"
+  done
+  PREVBLOCKHEIGHT=$(cat /tmp/previousblockheight)
+  CURRBLOCKHEIGHT=$(/usr/local/bin/gosu user zen-cli -conf=/home/user/.zen/zen.conf getblockcount|tr -d '\n')
+  /usr/local/bin/gosu user zen-cli -conf=/home/user/.zen/zen.conf getblockcount|tr -d '\n' > /tmp/previousblockheight
+  sleep 5
+  while [ "$PREVBLOCKHEIGHT" -lt "$CURRBLOCKHEIGHT" ]; do
+   /usr/local/bin/gosu user zen-cli -conf=/home/user/.zen/zen.conf getblockcount|tr -d '\n' > /tmp/previousblockheight
+   sleep 5
+   echo "Delaying Secure Node Tracker startup until the blockheight stops increasing..."
   done
   echo "Starting up Secure Node Tracker..."
   cd $ZEN_HOME/secnodetracker
   node app.js &
   
-# Wait 2 minutes before start checking the processes status
-  sleep 120
+# Wait 1 minute before start checking the processes status
+  sleep 60
 # Check if zend is still running or not. If not then exit entrypoint.sh with error code, which indicates docker to restart the container
 # If the secnodetracker is not running then just start it
   while true; do 

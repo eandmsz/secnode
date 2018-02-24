@@ -81,7 +81,12 @@ if [[ "$1" == start_secure_node ]]; then
   /usr/local/bin/gosu user zend &
 # Delay node tracker startup until we have at least 8 connections
   sleep 20
+  "$CONN"
   CONN=$(/usr/local/bin/gosu user zen-cli -conf=/home/user/.zen/zen.conf getconnectioncount|tr -d '\n')
+  while [ "$CONN" = "" ]; do
+   sleep 5
+   echo "Delaying Secure Node Tracker startup until zend has started"
+  done
   while [ "$CONN" -lt 8 ]; do
    sleep 5
    echo "Delaying Secure Node Tracker startup until we have enough connections: $CONN/8"

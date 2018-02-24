@@ -79,8 +79,13 @@ chown -R user:user $HOME $HOME/.zcash-params $ZEN_HOME/zcash-params $ZEN_HOME
 if [[ "$1" == start_secure_node ]]; then
   echo "Starting up Zen Daemon..."
   /usr/local/bin/gosu user zend &
-# Delay node tracker startup, so zend can connect to peers and catch up with blk height
-  sleep 30
+# Delay node tracker startup until we have at least 8 connections
+  sleep 20
+  CONN=$(/usr/local/bin/gosu user zen-cli -conf=/home/user/.zen/zen.conf getconnectioncount|tr -d '\n')
+  while [ $CONN < 8 ]; do
+   sleep 5
+   echo "Delaying Secure Node Tracker startup until we have at least 8 connections..."
+  done
   echo "Starting up Secure Node Tracker..."
   cd $ZEN_HOME/secnodetracker
   node app.js &

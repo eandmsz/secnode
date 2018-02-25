@@ -80,9 +80,16 @@ if [[ "$1" == start_secure_node ]]; then
   echo "Starting up Zen Daemon..."
   /usr/local/bin/gosu user zend &
   sleep 15
-  ISNUMERIC='^[0-9]+$'
-  while [ "$(/usr/local/bin/gosu user zen-cli -conf=/home/user/.zen/zen.conf getconnectioncount|tr -d '\n' 2>/dev/null)" =~ "$ISNUMERIC" ]; do
-   sleep 5; echo "Delaying Secure Node Tracker startup until zend has started..."
+  LEAVE=FALSE
+  while [ "$LEAVE" = "FALSE" ]; do
+    CONN="$(/usr/local/bin/gosu user zen-cli -conf=/home/user/.zen/zen.conf getconnectioncount|tr -d '\n' 2>/dev/null)"
+    if [ "$CONN" -eq "$CONN" ] 2>/dev/null; then
+      # is an integer, let's exit from the loop
+      LEAVE=TRUE
+    else
+      # not integer, let's stay in the loop until zend has started
+      sleep 5; echo "Delaying Secure Node Tracker startup until zend has started..."
+    fi
   done
   while [ "$(/usr/local/bin/gosu user zen-cli -conf=/home/user/.zen/zen.conf getconnectioncount|tr -d '\n' 2>/dev/null)" -lt 8 ]; do
    sleep 5; echo "Delaying Secure Node Tracker startup until we have 8 connections..."

@@ -82,7 +82,7 @@ if [[ "$1" == start_secure_node ]]; then
   sleep 15
   LEAVE=FALSE
   while [ "$LEAVE" = "FALSE" ]; do
-    CONN="$(/usr/local/bin/gosu user zen-cli -conf=/home/user/.zen/zen.conf getconnectioncount|tr -d '\n' 2>/dev/null)"
+    CONN="$(/usr/local/bin/gosu user zen-cli -conf=/home/user/.zen/zen.conf getconnectioncount 2>/dev/null|tr -d '\n')"
     if [ "$CONN" -eq "$CONN" ] 2>/dev/null; then
       # is an integer, let's exit from the loop
       LEAVE=TRUE
@@ -91,13 +91,13 @@ if [[ "$1" == start_secure_node ]]; then
       sleep 5; echo "Delaying Secure Node Tracker startup until zend has started..."
     fi
   done
-  while [ "$(/usr/local/bin/gosu user zen-cli -conf=/home/user/.zen/zen.conf getconnectioncount|tr -d '\n' 2>/dev/null)" -lt 8 ]; do
+  while [ "$(/usr/local/bin/gosu user zen-cli -conf=/home/user/.zen/zen.conf getconnectioncount 2>/dev/null|tr -d '\n')" -lt 8 ]; do
    sleep 5; echo "Delaying Secure Node Tracker startup until we have 8 connections..."
   done
-  /usr/local/bin/gosu user zen-cli -conf=/home/user/.zen/zen.conf getblockcount|tr -d '\n' 2>/dev/null >/tmp/previousblockheight
+  /usr/local/bin/gosu user zen-cli -conf=/home/user/.zen/zen.conf getblockcount 2>/dev/null|tr -d '\n' >/tmp/previousblockheight
   sleep 5
   while [ "$(cat /tmp/previousblockheight)" -lt "$(/usr/local/bin/gosu user zen-cli -conf=/home/user/.zen/zen.conf getblockcount 2>/dev/null|tr -d '\n')" ]; do
-   /usr/local/bin/gosu user zen-cli -conf=/home/user/.zen/zen.conf getblockcount|tr -d '\n' 2>/dev/null >/tmp/previousblockheight
+   /usr/local/bin/gosu user zen-cli -conf=/home/user/.zen/zen.conf getblockcount 2>/dev/null|tr -d '\n' >/tmp/previousblockheight
    sleep 5; echo "Delaying Secure Node Tracker startup until the blockheight stops increasing..."
   done
   rm /tmp/previousblockheight 2>/dev/null

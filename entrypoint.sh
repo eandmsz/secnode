@@ -110,10 +110,12 @@ if [[ "$1" == start_secure_node ]]; then
 # Check if zend is still running or not. If not then exit entrypoint.sh with error code, which indicates docker to restart the container
 # If the secnodetracker is not running then just start it
   while true; do 
-	  sleep 20
-	  if ! [ -e /mnt/zen/data/zend.pid ]; then echo "/mnt/zen/data/zend.pid missing. Let's stop the container..."; exit 1;
+	if ! [ -e /tmp/do_not_monitor_zend ]; then
+	  	if ! [ -e /mnt/zen/data/zend.pid ]; then echo "/mnt/zen/data/zend.pid missing. Let's stop the container..."; exit 1;
 	  	elif ! [ -e /proc/$(cat /mnt/zen/data/zend.pid) ]; then echo "zend is not running. Let's stop the container..."; exit 1; fi
-	  if ! $(ps -ef|grep -v grep|grep -q 'node app.js'); then echo "Secure Node Tracker not running. Let's start it..."; node app.js & fi
+	fi
+	if ! $(ps -ef|grep -v grep|grep -q 'node app.js'); then echo "Secure Node Tracker not running. Let's start it..."; node app.js & fi
+	sleep 20
   done
 else
   echo "Runnning command: $@"

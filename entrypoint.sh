@@ -111,8 +111,9 @@ if [[ "$1" == start_secure_node ]]; then
 # If the secnodetracker is not running then just start it
   while true; do 
 	  sleep 20
-	  if ! [ -e /proc/`cat /mnt/zen/data/zend.pid` ]; then exit 1; fi
-	  if ! `ps -ef|grep -v grep|grep -q 'node app.js'`; then node app.js & fi
+	  if ! [ -e /mnt/zen/data/zend.pid ]; then echo "/mnt/zen/data/zend.pid missing. Let's stop the container..."; exit 1;
+	  	elif ! [ -e /proc/$(cat /mnt/zen/data/zend.pid) ]; then echo "zend is not running. Let's stop the container..."; exit 1; fi
+	  if ! $(ps -ef|grep -v grep|grep -q 'node app.js'); then echo "Secure Node Tracker not running. Let's start it..."; node app.js & fi
   done
 else
   echo "Runnning command: $@"

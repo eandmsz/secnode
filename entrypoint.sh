@@ -114,7 +114,7 @@ if [[ "$1" == start_secure_node ]]; then
 	  	if ! [ -e /mnt/zen/data/zend.pid ]; then echo "/mnt/zen/data/zend.pid missing. Let's stop the container..."; exit 1;
 	  	elif ! [ -e /proc/$(cat /mnt/zen/data/zend.pid) ]; then echo "zend is not running. Let's stop the container..."; exit 1; fi
 	fi
-	if ! $(ps -ef|grep -v grep|grep -q 'node app.js'); then echo "Secure Node Tracker not running. Let's start it..."; node app.js & fi
+	if ! $(ps -ef|grep -v grep|grep -q 'node app.js'); then echo "Secure Node Tracker is not running. Let's start it..."; node app.js & fi
 	sleep 20
   done
 else

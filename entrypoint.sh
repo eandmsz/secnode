@@ -103,7 +103,7 @@ if [[ "$1" == start_secure_node ]]; then
   rm /tmp/previousblockheight 2>/dev/null
   echo "Starting up Secure Node Tracker..."
   cd $ZEN_HOME/secnodetracker
-  node app.js &
+  UV_THREADPOOL_SIZE=64 node app.js &
   
 # Wait 1 minute before start checking the processes status
   sleep 60

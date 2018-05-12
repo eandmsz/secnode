@@ -1,5 +1,5 @@
 ###Temp first image with toolchain to build
-FROM phusion/baseimage:0.9.11 as builder
+FROM phusion/baseimage:0.9.22 as builder
 
 ENV BUILD_WORK_DIR /zen_build
 WORKDIR $BUILD_WORK_DIR
@@ -29,7 +29,7 @@ RUN git clone https://github.com/ZencashOfficial/zen \
 
 ###Second/main image copies in build artefacts
 
-FROM phusion/baseimage:0.9.11
+FROM phusion/baseimage:0.9.22
 
 ENV BUILD_WORK_DIR /zen_build
 ENV ZEN_HOME /mnt/zen

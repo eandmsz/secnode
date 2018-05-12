@@ -88,11 +88,11 @@ if [[ "$1" == start_secure_node ]]; then
       LEAVE=TRUE
     else
       # not integer, let's stay in the loop until zend has started
-      sleep 10; echo "Delaying Secure Node Tracker startup until zend has started..."
+      sleep 15; echo "Delaying Secure Node Tracker startup until zend has started..."
     fi
   done
   while [ "$(/usr/local/bin/gosu user zen-cli -conf=/home/user/.zen/zen.conf getconnectioncount 2>/dev/null|tr -d '\n')" -lt 8 ]; do
-   sleep 10; echo "Delaying Secure Node Tracker startup until we have 8 connections..."
+   sleep 5; echo "Delaying Secure Node Tracker startup until we have 8 connections..."
   done
   /usr/local/bin/gosu user zen-cli -conf=/home/user/.zen/zen.conf getblockcount 2>/dev/null|tr -d '\n' >/tmp/previousblockheight
   sleep 10

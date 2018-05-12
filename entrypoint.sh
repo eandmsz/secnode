@@ -78,7 +78,7 @@ chown -R user:user $HOME $HOME/.zcash-params $ZEN_HOME/zcash-params $ZEN_HOME
 
 if [[ "$1" == start_secure_node ]]; then
   echo "Starting up Zen Daemon..."
-  /usr/local/bin/gosu user zend &
+  /usr/local/bin/gosu user zend -pid=$(hostname).pid &
   sleep 15
   LEAVE=FALSE
   while [ "$LEAVE" = "FALSE" ]; do
@@ -88,17 +88,17 @@ if [[ "$1" == start_secure_node ]]; then
       LEAVE=TRUE
     else
       # not integer, let's stay in the loop until zend has started
-      sleep 5; echo "Delaying Secure Node Tracker startup until zend has started..."
+      sleep 10; echo "Delaying Secure Node Tracker startup until zend has started..."
     fi
   done
   while [ "$(/usr/local/bin/gosu user zen-cli -conf=/home/user/.zen/zen.conf getconnectioncount 2>/dev/null|tr -d '\n')" -lt 8 ]; do
-   sleep 5; echo "Delaying Secure Node Tracker startup until we have 8 connections..."
+   sleep 10; echo "Delaying Secure Node Tracker startup until we have 8 connections..."
   done
   /usr/local/bin/gosu user zen-cli -conf=/home/user/.zen/zen.conf getblockcount 2>/dev/null|tr -d '\n' >/tmp/previousblockheight
-  sleep 5
+  sleep 10
   while [ "$(cat /tmp/previousblockheight)" -lt "$(/usr/local/bin/gosu user zen-cli -conf=/home/user/.zen/zen.conf getblockcount 2>/dev/null|tr -d '\n')" ]; do
    /usr/local/bin/gosu user zen-cli -conf=/home/user/.zen/zen.conf getblockcount 2>/dev/null|tr -d '\n' >/tmp/previousblockheight
-   sleep 5; echo "Delaying Secure Node Tracker startup until the blockheight stops increasing..."
+   sleep 10; echo "Delaying Secure Node Tracker startup until the blockheight stops increasing..."
   done
   rm /tmp/previousblockheight 2>/dev/null
   echo "Starting up Secure Node Tracker..."
@@ -111,10 +111,13 @@ if [[ "$1" == start_secure_node ]]; then
 # If the secnodetracker is not running then just start it
   while true; do 
 	if ! [ -e /tmp/do_not_monitor_zend ]; then
-	  	if ! [ -e /mnt/zen/data/zend.pid ]; then echo "/mnt/zen/data/zend.pid missing. Let's stop the container..."; exit 1;
-	  	elif ! [ -e /proc/$(cat /mnt/zen/data/zend.pid) ]; then echo "zend is not running. Let's stop the container..."; exit 1; fi
+	  	#if ! [ -e /mnt/zen/data/$(hostname).pid ]; then echo "pid file missing -> Let's stop the container..."; exit 1;
+	  	#elif ! [ -e /proc/$(cat /mnt/zen/data/$(hostname).pid) ]; then echo "zend is not running -> Let's stop the container..."; exit 1; fi
+		# We are restarting zend instead of stopping the whole container:
+		if ! [ -e /mnt/zen/data/$(hostname).pid ]; then echo "zend pid file missing -> Let's start zend..."; /usr/local/bin/gosu user zend -pid=$(hostname).pid &;
+	  	elif ! [ -e /proc/$(cat /mnt/zen/data/$(hostname).pid) ]; then echo "zend is not running -> Let's start it..."; /usr/local/bin/gosu user zend -pid=$(hostname).pid &; fi
 	fi
-	if ! $(ps -ef|grep -v grep|grep -q 'node app.js'); then echo "Secure Node Tracker is not running. Let's start it..."; UV_THREADPOOL_SIZE node app.js & fi
+	if ! $(ps -ef|grep -v grep|grep -q 'node app.js'); then echo "Secure Node Tracker is not running -> Let's start it..."; UV_THREADPOOL_SIZE node app.js & fi
 	sleep 20
   done
 else

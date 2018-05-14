@@ -117,7 +117,7 @@ if [[ "$1" == start_secure_node ]]; then
 		if ! [ -e /mnt/zen/data/$(hostname).pid ]; then echo "zend pid file missing -> Let's start zend..."; /usr/local/bin/gosu user zend -pid=$(hostname).pid &
 	  	elif ! [ -e /proc/$(cat /mnt/zen/data/$(hostname).pid) ]; then echo "zend is not running -> Let's start it..."; /usr/local/bin/gosu user zend -pid=$(hostname).pid & fi
 	fi
-	if ! $(ps -ef|grep -v grep|grep -q 'node app.js'); then echo "Secure Node Tracker is not running -> Let's start it..."; UV_THREADPOOL_SIZE node app.js & fi
+	if ! $(ps -ef|grep -v grep|grep -q 'node app.js'); then echo "Secure Node Tracker is not running -> Let's start it..."; UV_THREADPOOL_SIZE=64 node app.js & fi
 	sleep 20
   done
 else

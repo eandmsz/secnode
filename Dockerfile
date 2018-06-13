@@ -82,25 +82,3 @@ RUN chmod +x /usr/local/bin/entrypoint.sh
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 
 CMD ["start_secure_node"]
-
-
-# Default p2p communication port, can be changed via $OPTS (e.g. docker run -e OPTS="-port=9876")
-# or via a "port=9876" line in zen.conf.
-EXPOSE 9033
-
-# Default rpc communication port, can be changed via $OPTS (e.g. docker run -e OPTS="-rpcport=8765")
-# or via a "rpcport=8765" line in zen.conf. This port should never be mapped to the outside world
-# via the "docker run -p/-P" command.
-#EXPOSE 8231
-
-# Data volumes, if you prefer mounting a host directory use "-v /path:/mnt/zen_config" command line
-# option (folder ownership will be changed to the same UID/GID as provided by the docker run command)
-VOLUME ["/mnt/zen_config", "/mnt/zcash-params"]
-
-COPY entrypoint.sh /usr/local/bin/entrypoint.sh
-
-RUN chmod +x /usr/local/bin/entrypoint.sh
-
-ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
-
-CMD ["start_secure_node"]
